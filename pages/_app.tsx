@@ -2,6 +2,10 @@ import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import "@fontsource/ubuntu-mono";
 import "@fontsource/dm-mono";
+import "@fontsource/amita"
+import "@fontsource/caveat"
+import "@fontsource/raleway"
+import "@fontsource/space-mono"
 import Script from "next/script";
 import { useEffect } from "react";
 import mixpanel from "mixpanel-browser";

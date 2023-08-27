@@ -119,7 +119,7 @@ const sendTransaction = async (protocol:any,func : any, tokensArray: any, values
 }
 
 const configuration = new Configuration({
-  apiKey: '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',
+  apiKey: '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',
 });
 
 const openai = new OpenAIApi(configuration);
@@ -189,7 +189,7 @@ const getGptCompletion = async (intentMsg : string) => {
         console.log(addresses[tokensArray[0]])
 
         try{
-            // txHash = await sendTransaction(protocol,func_name,tokensArray, valuesArray, addresses);
+            txHash = await sendTransaction(protocol,func_name,tokensArray, valuesArray, addresses);
         }
         catch(err:any){
             console.log(err.message)
@@ -201,21 +201,21 @@ const getGptCompletion = async (intentMsg : string) => {
 app.use(bodyParser.json());
 
 // getGptCompletion("I want to repay 0.00001 USDT")
-getGptCompletion("I want to swap WMATIC for 0.00001 USDC")
+// getGptCompletion("I want to swap WMATIC for 0.00001 USDC")
 
-// app.post('/completion', async(req : any, res : any) => {
-//     console.log(req.body.body)
-//     const message = req.body.body;
-//     try {
-//         const response = await getGptCompletion(message);
-//         console.log(response);
-//         res.json(response);
-//     } catch(error) {
-//         console.error(error);
-//         res.status(500).send({ error: 'An error occurred while processing your request.' });
-//     }
-// });
+app.post('/completion', async(req : any, res : any) => {
+    console.log(req.body.body)
+    const message = req.body.body;
+    try {
+        const response = await getGptCompletion(message);
+        console.log(response);
+        res.json(response);
+    } catch(error) {
+        console.error(error);
+        res.status(500).send({ error: 'An error occurred while processing your request.' });
+    }
+});
 
 
-// const port = process.env.PORT || 8000;
-// app.listen(port, () => console.log(`Server running on http://localhost:${port}`));
+const port = process.env.PORT || 8000;
+app.listen(port, () => console.log(`Server running on http://localhost:${port}`));

@@ -28,7 +28,8 @@ const BiconomySocialLogin = dynamic(
 );
 
 const Home: NextPage = () => {
-  const header = `intents`;
+
+  const toast = useToast();
 
   const { smartAccount } = useContext(SmartAccountContext);
   console.log("Smart Account : ", smartAccount);
@@ -44,7 +45,6 @@ const Home: NextPage = () => {
   const [chainId, setChainId] = useState("");
   const [txnHash, setTxnHash] = useState("");
   const [txHash, setTxHash] = useState("");
-  // const { previewAudioStream, status, startRecording, stopRecording } = useReactMediaRecorder({ audio: true })
 
   useEffect(() => {
     if (login) login();
@@ -63,8 +63,18 @@ const Home: NextPage = () => {
         body: JSON.stringify({ body: `${command}` }),
       };
       const response = await fetch('http://localhost:8000/completion', options);
+      toast({
+        title: "Transaction Submitted",
+        description: `Borrowing 0.0001 USDT from AAVE Pool. \n
+                      0.0001 USDT will be transferred from Pool address 0x0b913A76beFF3887d35073b8e5530755D60F78C7 
+                      to your account ${account}`,
+        status: "info",
+        duration: 10000,
+        isClosable: true,
+      });
       const data = await response.json();
       console.log("Transaction hash is :",data);
+      setLoading(false);
       setTxHash(data);
     }
     else{
@@ -96,17 +106,6 @@ const Home: NextPage = () => {
       const data = await res.json();
       const { info } = data;
       console.log(data);
-      // @ts-ignore
-      // await window.ethereum.request({
-      // 	method: 'eth_sendTransaction',
-      // 	params: [{
-      // 		from: account,
-      // 		to: info.txObject.to,
-      // 		value: info.txObject.value,
-      // 		data: info.txObject.data,
-      // 	}]
-      // })
-  
       sendTransactionWithPaymaster(
         info.txObject.to,
         info.txObject.value,
@@ -153,12 +152,6 @@ const Home: NextPage = () => {
     }
   };
 
-  // queries
-  // const getIntentQuery = useQuery({
-  // 	queryKey: ['intents'],
-  // 	queryFn: getIntent
-  // })
-
   const connectToMetamask = async () => {
     // @ts-ignore
     if (typeof window.ethereum !== "undefined") {
@@ -178,26 +171,15 @@ const Home: NextPage = () => {
     }
   };
 
-  // let docsUrl = `https://brindle-dolomite-6fa.notion.site/API-Documentation-d61b477a2478475eba804f71807d0818?pvs=4`;
 
   return (
-    <Box bg={"blackAlpha.900"} h={"100vh"} fontFamily={"Dm Mono"}>
+    <Box bg={"white"} h={"100vh"} fontFamily={"Space Mono"}>
       <HStack
         px={[4, 8, 12]}
         py={[4, 8, 12]}
         align={"center"}
-        justify={"space-between"}
+        justify={"end"}
       >
-        <Stack spacing={0}>
-          <Heading
-            fontWeight={"medium"}
-            color={"blue.500"}
-            fontFamily={"Ubuntu Mono"}
-          >
-            {header}
-          </Heading>
-          {/* <Text color={"green.100"} fontSize={"xs"}>{`by bytekode labs`}</Text> */}
-        </Stack>
         <HStack spacing={8}>
           <BiconomySocialLogin
             setLogin={setLogin}
@@ -206,40 +188,31 @@ const Home: NextPage = () => {
           />
           {!smartAccountAddress ? (
             <Button
-              bgColor={"blackAlpha.700"}
-              color={"blue.500"}
-              _hover={{ bgColor: "blackAlpha.900" }}
+              bgColor={"whiteAlpha.700"}
+              color={"purple.500"}
+              _hover={{ bgColor: "whiteAlpha.900" }}
             >
               Login
             </Button>
           ) : (
             <VStack>
-              <Text>SCW Address:</Text>
-              <Text color={"blue.500"}>{smartAccountAddress.slice(0,6)}...{smartAccountAddress.slice(-6)}</Text>
+              <Text color={"purple.800"}>SCW Address:</Text>
+              <Text color={"purple.500"}>{smartAccountAddress.slice(0,6)}...{smartAccountAddress.slice(-6)}</Text>
             </VStack>
           )}
-          {/* <Text
-            as={"a"}
-            href={docsUrl}
-            referrerPolicy="no-referrer"
-            target="_blank"
-            color={"green.500"}
-          >
-            Docs
-          </Text> */}
           {!account ? (
             <Button
               onClick={connectToMetamask}
-              bgColor={"blackAlpha.700"}
-              color={"blue.500"}
-              _hover={{ bgColor: "blackAlpha.900" }}
+              bgColor={"whiteAlpha.700"}
+              color={"purple.500"}
+              _hover={{ bgColor: "whiteAlpha.900" }}
             >
               Connect Wallet
             </Button>
           ) : (
             <VStack>
-              <Text>EOA Address:</Text>
-              <Text color={"blue.500"}>
+              <Text color={"purple.800"}>EOA Address:</Text>
+              <Text color={"purple.500"}>
                 {account.slice(0, 6)}...{account.slice(-4)}
               </Text>
             </VStack>
@@ -248,41 +221,41 @@ const Home: NextPage = () => {
       </HStack>
       <VStack px={[4, 8, 12]} py={[4, 8, 12]}>
         {/* hero stuff goes here */}
-        <Text color={"blue.200"} mb={2} fontSize={"3xl"}>
+        <Text color={"purple.700"} fontWeight={"bold"} mb={2} fontSize={"4xl"}>
         From Words to Web3: 
         </Text>
-        <Text color={"blue.200"} mb={8} fontSize={"2xl"}>
+        <Text color={"purple.400"} fontWeight={"semibold"} mb={8} fontSize={"3xl"}>
         Powering Seamless Blockchain Interactions.
         </Text>
         <Input
           textAlign={"center"}
+          mt={4}
           maxW={"container.sm"}
+          height={"5vh"}
           value={command}
           onChange={(e) => setCommand(e.target.value)}
           placeholder="Type your intent..."
-          color={"blue.500"}
+          color={"purple.600"}
           variant={"filled"}
-          bgColor={"blackAlpha.700"}
-          _focus={{ bgColor: "blackAlpha.900", borderColor: "blue.500" }}
-          _hover={{ bgColor: "blackAlpha.900" }}
-          _placeholder={{ color: "blue.500" }}
+          bgColor={"whiteAlpha.700"}
+          _focus={{ bgColor: "whiteAlpha.900", borderColor: "purple.600" }}
+          _hover={{ bgColor: "whiteAlpha.900" }}
+          _placeholder={{ color: "purple.700" }}
           border={"2px"}
-          borderColor={"blue.800"}
+          borderColor={"purple.900"}
         />
         <HStack>
           <Button
             onClick={getIntent}
-            bgColor={"blackAlpha.900"}
-            color={"blue.500"}
-            _hover={{ bgColor: "blackAlpha.700" }}
+            bgColor={"purple.900"}
+            color={"white"}
+            _hover={{ bgColor: "purple.500" }}
             isLoading={loading}
             disabled={loading}
+            mt={6}
           >
-            Execute
+            Send Intent
           </Button>
-          {/* <Button bgColor={'blackAlpha.900'} color={'green.500'} _hover={{ bgColor: 'blackAlpha.700' }}>
-						<Icon as={BsFillMicFill}/>
-					</Button> */}
         </HStack>
         {!txnHash ? (
           !txHash ? null 
@@ -290,7 +263,7 @@ const Home: NextPage = () => {
           <Box
             maxW={"container.sm"}
             mt={8}
-            color={"blue.200"}
+            color={"purple.400"}
             fontSize={"md"}
             onClick={() =>
               window.open(
@@ -305,7 +278,7 @@ const Home: NextPage = () => {
           <Box
             maxW={"container.sm"}
             mt={8}
-            color={"blue.200"}
+            color={"purple.200"}
             fontSize={"md"}
             onClick={() =>
               window.open(
@@ -318,9 +291,9 @@ const Home: NextPage = () => {
           </Box>
         )}
         {/* footer stuff goes here */}
-        {/* <HStack px={[4, 8, 12]} py={[4, 8, 12]}>
-          <Text color={"green.600"}>&copy; 2023 {`Bytekode Labs, Inc`}</Text>
-        </HStack> */}
+        <HStack px={[4, 8, 12]} py={[4, 8, 12]}>
+          <Text color={"purple.600"}>&copy; Powered by Polygon</Text>
+        </HStack>
       </VStack>
     </Box>
   );
